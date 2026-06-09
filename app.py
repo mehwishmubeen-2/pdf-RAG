@@ -18,7 +18,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 # PAGE CONFIG
 st.set_page_config(page_title="PDF RAG Chatbot")
 
-st.title("📄 PDF RAG Chatbot using Groq")
+st.title(" PDF RAG Chatbot using Groq")
 
 # CHECK API KEY
 if not GROQ_API_KEY:
