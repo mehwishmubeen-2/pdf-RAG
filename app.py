@@ -57,11 +57,11 @@ if pdf:
 
     if query:
 
-        result = qa_chain.invoke({"query": query})
+        result = qa_chain.invoke({"input": query})
 
         st.subheader("Answer")
-        st.write(result["result"])
+        st.write(result["answer"])
 
         with st.expander("Source Chunks"):
-            for doc in result["source_documents"]:
+            for doc in result["context"]:
                 st.write(doc.page_content)

@@ -1,13 +1,11 @@
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
-
 from langchain_groq import ChatGroq
-from langchain.chains import RetrievalQA
-
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.prompts import ChatPromptTemplate
 
 
 # LOAD PDF
@@ -55,10 +53,10 @@ def create_qa_chain(vectorstore, api_key):
         search_kwargs={"k": 3}
     )
 
-    qa_chain = RetrievalQA.from_chain_type(
-        llm=llm,
-        retriever=retriever,
-        return_source_documents=True
-    )
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "Answer the question based only on the following context:\n\n{context}"),
+        ("human", "{input}"),
+    ])
 
-    return qa_chain
+    combine_docs_chain = create_stuff_documents_chain(llm, prompt)
+    return create_retrieval_chain(retriever, combine_docs_chain)
