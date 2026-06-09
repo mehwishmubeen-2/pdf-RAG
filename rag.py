@@ -3,9 +3,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
 
 
 # LOAD PDF
@@ -58,5 +58,19 @@ def create_qa_chain(vectorstore, api_key):
         ("human", "{input}"),
     ])
 
-    combine_docs_chain = create_stuff_documents_chain(llm, prompt)
-    return create_retrieval_chain(retriever, combine_docs_chain)
+    def format_docs(docs):
+        return "\n\n".join(doc.page_content for doc in docs)
+
+    # Pure LCEL chain — returns {"input": str, "context": [docs], "answer": str}
+    chain = RunnablePassthrough.assign(
+        context=lambda x: retriever.invoke(x["input"])
+    ).assign(
+        answer=(
+            RunnablePassthrough.assign(context=lambda x: format_docs(x["context"]))
+            | prompt
+            | llm
+            | StrOutputParser()
+        )
+    )
+
+    return chain
