@@ -13,8 +13,8 @@ from rag import (
 # LOAD ENV
 load_dotenv()
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-
+# This looks locally first, then looks inside your Streamlit Advanced Secrets on the cloud!
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
 # PAGE CONFIG
 st.set_page_config(page_title="PDF RAG Chatbot")
 

@@ -1,8 +1,8 @@
 streamlit
 langchain
-langchain-core
-langchain-text-splitters
 langchain-community
+langchain-text-splitters
+langchain-huggingface
 pypdf
 chromadb
-langchain-huggingface
+python-dotenv
