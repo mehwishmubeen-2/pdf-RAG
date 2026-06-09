@@ -1,6 +1,6 @@
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
@@ -31,13 +31,7 @@ def split_text(pages):
 
 def create_vectorstore(docs):
     embeddings = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
-
-    vectorstore = Chroma.from_documents(
-        documents=docs,
-        embedding=embeddings,
-        persist_directory="chroma_db"   # 👈 IMPORTANT
-    )
-
+    vectorstore = FAISS.from_documents(docs, embeddings)
     return vectorstore
 
 
