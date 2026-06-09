@@ -1,5 +1,5 @@
 streamlit
-chromadb
+langchain
+langchain-community
 pypdf
-torch
-openai
+chromadb
